@@ -22,7 +22,7 @@ Transition:
 Subtract 1 from the column for Else: Don't remove the element
 
 Reward: -sum(d) after fixing
-
+<pre>
 Example:  
 n = 2 
 lambda matrix:  
@@ -30,18 +30,18 @@ lambda matrix:
 0.4 0.5]
 
 Observation:                
-outputs    
+             outputs    
 inputs A [2 3   
-       B  4 5]  
+            B  4 5]  
 
 Action = [2,1] 
 
 Observation:
-       outputs   
+           outputs   
 inputs A [1 3  
-       B  4 4]  
+            B  4 4]  
 
 Reward: -11
 
-
+</pre>
 
