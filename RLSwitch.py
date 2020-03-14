@@ -1,4 +1,6 @@
-class FooEnv(gym.Env):
+import gym
+
+class RLSwitchEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
