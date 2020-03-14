@@ -16,7 +16,7 @@ Actions:
 Validity check:
 
 There is something that can go to output queue
-There is no repeats in action ueue
+There are no repeats in action queue
 Transition:
 
 Subtract 1 from the column for Else: Don't remove the element
@@ -25,17 +25,21 @@ Reward: -sum(d) after fixing
 
 Example:  
 n = 2 
-lambda matrix:
+lambda matrix:  
 [0.2 0.3   
 0.4 0.5]
 
-Observation: outputs inputs A [2 3   
-							B  4 5]
+Observation:                
+outputs    
+inputs A [2 3   
+       B  4 5]  
 
-Action [2,1] =
+Action = [2,1] 
 
-Observation: outputs inputs A [1 3  
-							B  4 4]
+Observation:
+       outputs   
+inputs A [1 3  
+       B  4 4]  
 
 Reward: -11
 
