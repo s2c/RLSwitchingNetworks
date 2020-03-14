@@ -7,11 +7,11 @@ An environment that simulates a switching network from the paper titled "A Forma
 
 lambda_i_j = n x n arrival/matching matrix, input i -> output j // T be
 
-##Observations:  
+## Observations:  
 
 Q_n : n x n the number and type of packet in each input queue, in order
 
-##Actions:
+## Actions:
 
 [n length binary vector] = Each entry corresponds to which output the input queue is subtracting from
 
@@ -20,13 +20,14 @@ Validity check:
 There is something that can go to output queue
 There are no repeats in action queue  
 
-##Transition:
+## Transition:
 
 Subtract 1 from the column for Else: Don't remove the element
 
-Reward: -sum(Q_n) after taking action
+Reward: -sum(Q_n) after taking action  
+## Example:  
 <pre>
-Example:  
+
 n = 2 
 lambda matrix:  
 [0.2 0.3   
