@@ -2,8 +2,6 @@ import gym
 import numpy as np
 import collections
 
-from random import sample
-
 
 class multiOneHotEncoding(gym.Space):  # create one hot vector
     """
@@ -45,10 +43,3 @@ class multiOneHotEncoding(gym.Space):  # create one hot vector
 
     def __eq__(self, other):  # overrage equality
         return self.shape == other.shape
-
-    def _random_insert_seq(lst, seq):
-        insert_locations = sample(xrange(len(lst) + len(seq)), len(seq))
-        inserts = dict(zip(insert_locations, seq))
-        input = iter(lst)
-        lst[:] = [inserts[pos] if pos in inserts else next(input)
-                  for pos in xrange(len(lst) + len(seq))]
