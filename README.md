@@ -5,20 +5,19 @@ An environment that simulates a switching network from the paper titled "A Forma
 
 ## Parameters:
 
-lambda_i_j = n x n arrival/matching matrix, input i -> output j // T be
+lambda_i_j = n x n arrival/matching matrix, input i -> output j 
 
 ## Observations:  
 
-Q_n : n x n the number and type of packet in each input queue, in order
+Q_n : n x n matrix that corresponds to the input and output queues
 
 ## Actions:
 
-[n length binary vector] = Each entry corresponds to which output the input queue is subtracting from
+[n x n] Binary matrix. Each positive entry in row corresponds to which output the queue will send to
 
 Validity check:
 
 There is something that can go to output queue
-There are no repeats in action queue  
 
 ## Transition:
 
