@@ -20,7 +20,7 @@ class multiOneHotEncoding(gym.Space):  # create one hot vector
 
     def sample(self):
         one_hot_vector = np.zeros(self.shape)  # initialize a 0 vector
-        num_1s = np.random.randint(low=1, high=self.shape[0] + 1)
+        num_1s = np.random.randint(low=0, high=self.shape[0] + 1)
         possible = np.arange(0, num_1s, 1)
         if len(possible) < self.shape[0]:
             numMissing = self.shape[0] - len(possible)
