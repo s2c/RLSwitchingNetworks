@@ -53,13 +53,13 @@ class RLSwitchEnv(gym.Env):
         self.reset()
 
     def generateValidActions(self):
+        # Generate all possible
         allwords = list(it.product(*([(0, 1)] * (self.n**2))))
-        allarrays = map(np.asarray, allwords)
-        allmatrices = [a.reshape(self.n, self.n) for a in allarrays]
-        validActions = []
-        for each_matrix in allmatrices:
-            if self.action_space_actual.contains(each_matrix):
-                validActions.append(each_matrix)
+        allarrays = map(np.asarray, allwords)  # Convert to array
+        allmatrices = [a.reshape(self.n, self.n)
+                       for a in allarrays]  # Matrixify
+        validActions = [
+            x for x in allmatrices if self.action_space_actual.contains(x)]
         return validActions
 
     def reset(self):
@@ -95,7 +95,8 @@ class RLSwitchEnv(gym.Env):
         return
 
     def _take_action(self, action):
-        curAction = self.validActions[action]  # Map action number to actual action
+        # Map action number to actual action
+        curAction = self.validActions[action]
         self.state = self.state - curAction  # Subtract from the queues
         self.state[self.state < 0] = 0
         self.t = self.t + 1  # increase the time step
