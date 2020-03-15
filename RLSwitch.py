@@ -69,7 +69,7 @@ class RLSwitchEnv(gym.Env):
             ob = self._get_state()
             info = "INVALID ACTION"
             return ob, reward, done, info
-        else: =
+        else:
             self._take_action(action)
             done = self._get_status()
             reward = self._get_reward()
@@ -92,6 +92,11 @@ class RLSwitchEnv(gym.Env):
         arrivals = np.random.binomial(
             1, self.lambdaMatrix).reshape((self.n, self.n))
         self.state += arrivals
+        while np.all(self.state==0): # Make sure there is atleast 1 element in the queue
+            print("here")
+            arrivals = np.random.binomial(
+                1, self.lambdaMatrix).reshape((self.n, self.n))
+            self.state += arrivals
 
     def _get_reward(self):
         """ Reward is given for current state """
