@@ -2,6 +2,7 @@ import gym
 from gym import spaces
 from multiOneHot import multiOneHotEncoding
 import numpy as np
+import itertools as it
 
 
 class RLSwitchEnv(gym.Env):
@@ -37,17 +38,29 @@ class RLSwitchEnv(gym.Env):
         self.end_t = end_t  # last time step
         self.statuses = ['ONGOING', 'OVER']  # Status definitions
         if lambdaMatrix is None:  # lambda matrix for arrivals
-
             self.lambdaMatrix = np.ones((self.n, self.n)) * 0.5
         else:
             self.lambdaMatrix = lambdaMatrix
 
         # Setup the spaces for learners
-        self.action_space = multiOneHotEncoding(
+        self.action_space_actual = multiOneHotEncoding(
             [n, n])  # Binary one hot matrix input space
+        self.validActions = self.generateValidActions()  # Generates all possible actions
+        # We have length(validActions) discrete possible actions
+        self.action_space = spaces.Discrete(len(self.validActions))
         self.observation_space = spaces.Box(
             low=0, high=np.inf, shape=(n, n), dtype=int)  # nxn queue observation space
         self.reset()
+
+    def generateValidActions(self):
+        allwords = list(it.product(*([(0, 1)] * (self.n**2))))
+        allarrays = map(np.asarray, allwords)
+        allmatrices = [a.reshape(self.n, self.n) for a in allarrays]
+        validActions = []
+        for each_matrix in allmatrices:
+            if self.action_space_actual.contains(each_matrix):
+                validActions.append(each_matrix)
+        return validActions
 
     def reset(self):
         self.state = np.zeros((self.n, self.n))  # Starting state is all zeros
@@ -82,7 +95,8 @@ class RLSwitchEnv(gym.Env):
         return
 
     def _take_action(self, action):
-        self.state = self.state - action  # Subtract from the queues
+        curAction = self.validActions[action]  # Map action number to actual action
+        self.state = self.state - curAction  # Subtract from the queues
         self.state[self.state < 0] = 0
         self.t = self.t + 1  # increase the time step
         if self.t >= self.end_t:  # Check if we are now done
