@@ -62,28 +62,29 @@ class RLSwitchEnv(gym.Env):
         # Make sure no queue goes below zero and action is valid
         if self.status == self.statuses[1]:
             raise RuntimeError("Game is done")
-        if (not self.action_space.contains(action)) or np.any((self.state - action) < 0):
-            reward = -100
-            self.status = self.statuses[0]
-            done = self._get_status()
-            ob = self._get_state()
-            info = "INVALID ACTION"
-            return ob, reward, done, info
-        else:
-            self._take_action(action)
-            done = self._get_status()
-            reward = self._get_reward()
-            self._update_state()
-            ob = self._get_state()
-            info = "ACTION TAKEN"
+        # if (not self.action_space.contains(action)) or np.any((self.state - action) < 0):
+        #     reward = -100
+        #     self.status = self.statuses[0]
+        #     done = self._get_status()
+        #     ob = self._get_state()
+        #     info = "INVALID ACTION"
+        #     return ob, reward, done, info
+        # else:
+        self._take_action(action)
+        done = self._get_status()
+        reward = self._get_reward()
+        self._update_state()
+        ob = self._get_state()
+        info = "ACTION TAKEN"
 
-            return ob, reward, done, info
+        return ob, reward, done, info
 
     def _render(self, mode='human', close=False):
         return
 
     def _take_action(self, action):
         self.state = self.state - action  # Subtract from the queues
+        self.state[self.state < 0] = 0
         self.t = self.t + 1  # increase the time step
         if self.t >= self.end_t:  # Check if we are now done
             self.status = self.statuses[1]
@@ -92,7 +93,7 @@ class RLSwitchEnv(gym.Env):
         arrivals = np.random.binomial(
             1, self.lambdaMatrix).reshape((self.n, self.n))
         self.state += arrivals
-        while np.all(self.state==0): # Make sure there is atleast 1 element in the queue
+        while np.all(self.state == 0):  # Make sure there is atleast 1 element in the queue
             print("here")
             arrivals = np.random.binomial(
                 1, self.lambdaMatrix).reshape((self.n, self.n))
