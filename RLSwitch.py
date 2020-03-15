@@ -1,6 +1,6 @@
 import gym
 from gym import spaces
-from oneHot import OneHotEncoding
+from multiOneHot import multiOneHotEncoding
 import numpy as np
 
 
@@ -26,64 +26,76 @@ class RLSwitchEnv(gym.Env):
         episode_over (bool) :
             - number of timesteps
 
-        info (dict) :
-             diagnostic information useful for debugging. It can sometimes
-             be useful for learning (for example, it might contain the raw
-             probabilities behind the environment's last state change).
-             However, official evaluations of your agent are not allowed to
-             use this for learning.
+        info : error string for diagnostic purposes only
+
     """
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, end_t=15, n=3, lambdaMatrix=None):
-
-        self.n = 3
-        self.end_t = 16
-        self.statuses = ['ONGOING', 'OVER']
-        if lambdaMatrix is None:
+    def __init__(self, n=3, end_t=15, lambdaMatrix=None):
+        # Initialize the values
+        self.n = n  # Number of input/output queues
+        self.end_t = end_t  # last time step
+        self.statuses = ['ONGOING', 'OVER']  # Status definitions
+        if lambdaMatrix is None:  # lambda matrix for arrivals
             self.lambdaMatrix = [0.5, 0.5, 0.5,
                                  0.5, 0.5, 0.5,
                                  0.5, 0.5, 0.5]
         else:
             self.lambdaMatrix = lambdaMatrix
+
+        # Setup the spaces for learners
+        self.action_space = multiOneHotEncoding(
+            [n, n])  # Binary one hot matrix input space
+        self.observation_space = spaces.Box(
+            low=0, high=np.inf, shape=(n, n), dtype=int)  # nxn queue observation space
         self.reset()
 
-    def _reset(self):
-        actionTuple = [OneHotEncoding(self.n)] * self.n
-        self.action_space = spaces.Tuple(actionTuple)  # n
-        self.state = np.zeros((self.n, self.n))
-        self.status = self.statuses[0]
-        self.Totalreward = 0
+    def reset(self):
+        self.state = np.zeros((self.n, self.n))  # Starting state is all zeros
+        self.status = self.statuses[0]  # Starting status is ongoing
+        self.t = 0  # time steps
 
-    def _step(self, action):
+    def step(self, action):
 
         # Check if action is valid:
-        if np.any(state-action) < 0:
+        # Make sure no queue goes below zero and action is valid
+        if self.status == self.statuses[1]:
+            raise RuntimeError("Game is done")
+        if (not self.action_space.contains(action)) or (np.any(self.state - action) < 0):
             reward = -100
+            self.status = self.statuses[0]
+            done = self._get_status()
+            ob = self.getState()
+            info = "INVALID ACTION, STATE NOT ADVANCED"
+            return ob, reward, done, info
+        else:
+            self._take_action(action)
+            done = self._get_status()
+            reward = self._get_reward()
+            ob = self._get_state()
+            info = "ACTION TAKEN"
 
-        self._take_action(action)
-        self.status = self._get_status()
-        reward = self._get_reward()
-        ob = self.env.getState()
-
-        return ob, reward, self.status
+            return ob, reward, done, info
 
     def _render(self, mode='human', close=False):
-        pass
+        return
 
     def _take_action(self, action):
-        # If action is invalid:
-
-                # If action is valid
+        self.state = self.state - action  # Subtract from the queues
+        self.t = self.t + 1  # increase the time step
+        if self.t >= self.end_t:  # Check if we are now done
+            self.status = self.statuses[1]
 
     def _get_reward(self):
         """ Reward is given for current state """
         return -np.sum(self.state)
 
+    def _get_state(self):
+        return self.state
+
     def _get_status(self):
         """ Reward is given for current state """
-        if self.status == self.statuses[0]:
-            return 0
-        elif self.status == self.statuses[1]:
-            return 1
-
+        if self.status == self.statuses[0]:  # ONGOING
+            return False
+        elif self.status == self.statuses[1]:  # DONE
+            return True

@@ -16,7 +16,7 @@ Q_n : n x n matrix that corresponds to the input and output queues
 [n x n] Binary matrix. Each positive entry in row corresponds to which output the queue will send to
 
 Validity check:
-
+N
 There is something that can go to output queue
 
 ## Transition:
