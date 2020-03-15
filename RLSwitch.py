@@ -37,9 +37,8 @@ class RLSwitchEnv(gym.Env):
         self.end_t = end_t  # last time step
         self.statuses = ['ONGOING', 'OVER']  # Status definitions
         if lambdaMatrix is None:  # lambda matrix for arrivals
-            self.lambdaMatrix = [0.5, 0.5, 0.5,
-                                 0.5, 0.5, 0.5,
-                                 0.5, 0.5, 0.5]
+
+            self.lambdaMatrix = np.ones((self.n, self.n)) * 0.5
         else:
             self.lambdaMatrix = lambdaMatrix
 
@@ -93,11 +92,11 @@ class RLSwitchEnv(gym.Env):
         arrivals = np.random.binomial(
             1, self.lambdaMatrix).reshape((self.n, self.n))
         self.state += arrivals
-        while np.all(self.state == 0):  # Make sure there is atleast 1 element in the queue
-            print("here")
-            arrivals = np.random.binomial(
-                1, self.lambdaMatrix).reshape((self.n, self.n))
-            self.state += arrivals
+        # while np.all(self.state == 0):  # Make sure there is atleast 1 element in the queue
+        #     print("here")
+        #     arrivals = np.random.binomial(
+        #         1, self.lambdaMatrix).reshape((self.n, self.n))
+        #     self.state += arrivals
 
     def _get_reward(self):
         """ Reward is given for current state """
