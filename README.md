@@ -12,12 +12,11 @@ lambda_i_j = n x n arrival/matching matrix, input i -> output j
 Q_n : n x n matrix that corresponds to the input and output queues
 
 ## Actions:
-
+Actual:
 [n x n] Binary matrix. Each positive entry in row corresponds to which output the queue will send to
-
+Representation: n discrete integers, each of which maps to a particular binary matrix contribution
 Validity check:
-N
-There is something that can go to output queue
+Row and colums sum to 1
 
 ## Transition:
 
@@ -37,7 +36,8 @@ Observation:
 inputs A [2 3   
        B  4 5]  
 
-Action = [2,1] 
+Action = 1 maps to-> [1 0   
+       	              0 1]  
 
 Observation:
          outputs   
