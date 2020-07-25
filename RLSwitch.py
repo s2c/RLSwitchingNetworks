@@ -38,7 +38,7 @@ class RLSwitchEnv(gym.Env):
         self.end_t = end_t  # last time step
         self.statuses = ['ONGOING', 'OVER']  # Status definitions
         if lambdaMatrix is None:  # lambda matrix for arrivals
-            self.lambdaMatrix = np.ones((self.n, self.n)) * 0.5
+            self.lambdaMatrix = np.ones((self.n, self.n))/(self.n*self.n)
         else:
             self.lambdaMatrix = lambdaMatrix
 
@@ -103,7 +103,7 @@ class RLSwitchEnv(gym.Env):
         if self.t >= self.end_t:  # Check if we are now done
             self.status = self.statuses[1]
 
-    def _update_state(self):
+    def _update_state(self): #IS THIS VALID
         arrivals = np.random.binomial(
             1, self.lambdaMatrix).reshape((self.n, self.n))
         self.state += arrivals
