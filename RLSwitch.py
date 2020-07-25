@@ -32,13 +32,13 @@ class RLSwitchEnv(gym.Env):
     """
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, n=3, end_t=15, lambdaMatrix=None):
+    def __init__(self, n=3, end_t=15, lambdaMatrix=None,rho=0.8):
         # Initialize the values
         self.n = n  # Number of input/output queues
         self.end_t = end_t  # last time step
         self.statuses = ['ONGOING', 'OVER']  # Status definitions
         if lambdaMatrix is None:  # lambda matrix for arrivals
-            self.lambdaMatrix = np.ones((self.n, self.n))/(self.n)
+            self.lambdaMatrix = (np.ones((self.n, self.n))*rho)/(self.n)
         else:
             self.lambdaMatrix = lambdaMatrix
 
