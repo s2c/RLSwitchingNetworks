@@ -38,7 +38,7 @@ class RLSwitchEnv(gym.Env):
         self.end_t = end_t  # last time step
         self.statuses = ['ONGOING', 'OVER']  # Status definitions
         if lambdaMatrix is None:  # lambda matrix for arrivals
-            self.lambdaMatrix = np.ones((self.n, self.n))/(self.n*self.n)
+            self.lambdaMatrix = np.ones((self.n, self.n))/(self.n)
         else:
             self.lambdaMatrix = lambdaMatrix
 
