@@ -15,35 +15,6 @@ gamma = 0.99
 lmbda = 0.95
 
 
-def get_advantages(values, masks, rewards):
-    returns = []
-    gae = 0
-    for i in reversed(range(len(rewards))):
-        delta = rewards[i] + gamma * values[i + 1] * masks[i] - values[i]
-        gae = delta + gamma * lmbda * masks[i] * gae
-        returns.insert(0, gae + values[i])
-
-    adv = np.array(returns) - values[:-1]
-    return returns, (adv - np.mean(adv)) / (np.std(adv) + 1e-10)
-
-
-def ppo_loss(oldpolicy_probs, advantages, rewards, values):
-    def loss(y_true, y_pred):
-        newpolicy_probs = y_pred
-        ratio = K.exp(K.log(newpolicy_probs + 1e-10) -
-                      K.log(oldpolicy_probs + 1e-10))
-        p1 = ratio * advantages
-        p2 = K.clip(ratio, min_value=1 - clipping_val,
-                    max_value=1 + clipping_val) * advantages
-        actor_loss = -K.mean(K.minimum(p1, p2))
-        critic_loss = K.mean(K.square(rewards - values))
-        total_loss = critic_discount * critic_loss + actor_loss - entropy_beta * K.mean(
-            -(newpolicy_probs * K.log(newpolicy_probs + 1e-10)))
-        return total_loss
-
-    return loss
-
-
 class PPO:
     def __init__(self, env):
         self.env = env
@@ -85,3 +56,31 @@ class PPO:
             model.compile(optimizer=Adam(lr=1e-4), loss='mse')
             # model.summary()
             return model
+
+        def get_advantages(values, masks, rewards):
+            returns = []
+            gae = 0
+            for i in reversed(range(len(rewards))):
+                delta = rewards[i] + gamma * \
+                    values[i + 1] * masks[i] - values[i]
+                gae = delta + gamma * lmbda * masks[i] * gae
+                returns.insert(0, gae + values[i])
+
+            adv = np.array(returns) - values[:-1]
+            return returns, (adv - np.mean(adv)) / (np.std(adv) + 1e-10)
+
+        def ppo_loss(oldpolicy_probs, advantages, rewards, values):
+            def loss(y_true, y_pred):
+                newpolicy_probs = y_pred
+                ratio = K.exp(K.log(newpolicy_probs + 1e-10) -
+                              K.log(oldpolicy_probs + 1e-10))
+                p1 = ratio * advantages
+                p2 = K.clip(ratio, min_value=1 - clipping_val,
+                            max_value=1 + clipping_val) * advantages
+                actor_loss = -K.mean(K.minimum(p1, p2))
+                critic_loss = K.mean(K.square(rewards - values))
+                total_loss = critic_discount * critic_loss + actor_loss - entropy_beta * K.mean(
+                    -(newpolicy_probs * K.log(newpolicy_probs + 1e-10)))
+                return total_loss
+
+            return loss

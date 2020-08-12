@@ -68,6 +68,8 @@ class RLSwitchEnv(gym.Env):
         self.status = self.statuses[0]  # Starting status is ongoing
         self.t = 0  # time steps
 
+        # return np.array([self._get_state(), 0, self._get_status(), "NONE"])
+        return self._get_state()
     def step(self, action):
 
         # Check if action is valid:
@@ -89,7 +91,7 @@ class RLSwitchEnv(gym.Env):
         ob = self._get_state()
         info = "ACTION TAKEN"
 
-        return ob, reward, done, info
+        return np.array([ob, reward, done, {}])
 
     def _render(self, mode='human', close=False):
         return
