@@ -14,11 +14,15 @@ class maxWeight:
         return sum(weightIndividual)
 
     def act(self):
-        curAction = None
         curWeight = -1
+        actionSet = []
         for i, action in enumerate(self.env.validActions):
             weight = self.calcWeight(action)
             if weight > curWeight:
-                curAction = i
+                # reset the action set to just have the current action
+                actionSet = [action]
                 curWeight = weight
-        return curAction
+            if weight == curWeight:
+                actionSet.append(action)
+
+        return np.random.choice(actionSet)

@@ -12,11 +12,11 @@ class DQN:
         self.env = env
         self.memory = deque(maxlen=2000)
 
-        self.gamma = 0.85 # Try setting it to near 1
+        self.gamma = 1 # Try setting it to near 1
         self.epsilon = 1.0
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
-        self.learning_rate = 0.005
+        self.epsilon_decay = 0.95
+        self.learning_rate = 0.01
         self.tau = .125
 
         self.model = self.create_model()
@@ -27,8 +27,7 @@ class DQN:
         state_shape = self.env.observation_space.shape
         model.add(Dense(24, input_dim=state_shape[0], activation="relu"))
         model.add(Dense(48, activation="relu"))
-        model.add(Dense(24, activation="relu"))
-        model.add(Dense(self.env.action_space.n))
+        model.add(Dense(self.env.action_space.n,activation="softmax"))
         model.compile(loss="mean_squared_error",
                       optimizer=Adam(lr=self.learning_rate))
         return model
@@ -44,7 +43,7 @@ class DQN:
         self.memory.append([state, action, reward, new_state, done])
 
     def replay(self):
-        batch_size = 32
+        batch_size = 4
         if len(self.memory) < batch_size:
             return
 
