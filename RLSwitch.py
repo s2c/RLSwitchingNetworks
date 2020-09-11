@@ -32,7 +32,7 @@ class RLSwitchEnv(gym.Env):
     """
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, n=3, end_t=15, lambdaMatrix=None,rho=0.8):
+    def __init__(self, n=3, end_t=15, lambdaMatrix=None,rho=0.5):
         # Initialize the values
         self.n = n  # Number of input/output queues
         self.end_t = end_t  # last time step
